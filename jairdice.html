@@ -2,7 +2,9 @@
   <head>
     <title>Jair Dice</title>
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="sweetalert.css">
     <link rel="stylesheet" href="jairdice.css">
+    <meta charset="utf-8"/>
   </head>
   <body>
     <div class="keyboard">
@@ -39,20 +41,27 @@
         <div class="key" data-key="77">m</div>
       </div>
     </div>
+    <script src="sweetalert.min.js"></script>
     <script>
     const niveles = 15
     let teclas = generarTeclas(niveles)
 
     function siguienteNivel(nivelActual){
       if(nivelActual == niveles) {
-        return alert('¡Ganaste!')
+        return swal({
+          title: '¡Ganaste!',
+          type: 'success'
+        })
       }
-
-      alert(`Nivel ${nivelActual + 1}`)
+      swal({
+        title: `Nivel ${nivelActual + 1}`,
+        showConfirmButton: false,
+        timer: 1000
+      })
 
       for(let i = 0 ; i <= nivelActual; i++){
         setTimeout(()=> activar(teclas[i]),
-      1000 * (i + 1))
+        1000 * (i + 1) + 1000)
       }
       let i = 0
       let teclaActual = teclas[i]
@@ -69,8 +78,19 @@
         }else{
           activar(evento.keyCode, {fail: true})
           window.removeEventListener('Keydown', onkeydown)
-          setTimeout(() => alert('¡Perdiste!'), 1000)
-          setTimeout(() => siguienteNivel(0), 2000)
+          setTimeout(() => swal({
+            title: '¡Perdiste!',
+            text: '¿Quieres jugar de nuevo',
+            showCancelButton: true,
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'No',
+            closeOnConfirm: true
+          }, function(ok){
+            if(ok){
+              teclas = generarTeclas(niveles)
+              siguienteNivel(0)
+            }
+          }), 1000)
         }
       }
     }
